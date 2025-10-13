@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cube Face Upload</title>
+</head>
+
+<body>
+    <h2>Upload Cube Face</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        Face:
+        <select name="face">
+            <option value="U">Up</option>
+            <option value="D">Down</option>
+            <option value="F">Front</option>
+            <option value="B">Back</option>
+            <option value="L">Left</option>
+            <option value="R">Right</option>
+        </select>
+        <br><br>
+        Image: <input type="file" name="file" accept="image/*" />
+        <br><br>
+        <button type="submit">Upload</button>
+    </form>
+
+    <p id="status"></p>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            // http://computer_ip:5000/upload_face
+            const res = await fetch('http://192.168.0.115:5000/upload_face', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            document.getElementById('status').innerText = JSON.stringify(data);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rubik's Cube Solver Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+    
+    <!-- 🚨 NUCLEAR PREVENTION: Stop ALL form submissions -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prevent ALL form submissions globally
+            document.addEventListener('submit', function(e) {
+                console.log('🚫 BLOCKED FORM SUBMISSION');
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }, true);
+            
+            // Prevent ALL enter key in forms
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.target.form) {
+                    console.log('🚫 BLOCKED ENTER KEY');
+                    e.preventDefault();
+                    return false;
+                }
+            }, true);
+            
+            console.log('✅ Form prevention installed');
+        });
+    </script>
+</head>
+
+<body>
+    <h1>🧩 Rubik's Cube Solver Dashboard</h1>
+
+    <!-- Backend Configuration -->
+    <div class="config-section">
+        <label for="backendIP">Backend IP:</label>
+        <input type="text" id="backendIP" placeholder="http://192.168.x.x:5000" />
+        <button type="button" id="setBackendBtn">Set Backend</button>
+        <p id="backendStatus">Backend not set</p>
+    </div>
+
+    <!-- File Upload Section -->
+    <div class="upload-section">
+        <h2>Upload Cube Face</h2>
+        <label for="face">Select Face:</label>
+        <select name="face" id="face">
+            <option value="U">Up (White)</option>
+            <option value="D">Down (Yellow)</option>
+            <option value="F">Front (Green)</option>
+            <option value="B">Back (Blue)</option>
+            <option value="L">Left (Red)</option>
+            <option value="R">Right (Orange)</option>
+        </select>
+        <input type="file" name="file" id="file" accept="image/*" />
+        <button type="button" id="uploadBtn">Upload</button>
+        <p id="uploadStatus"></p>
+    </div>
+
+    <!-- Real-Time Camera -->
+    <h3>📸 Real-Time Capture</h3>
+    <div id="cameraSection">
+        <video id="cameraPreview" autoplay playsinline width="240"></video><br>
+        <select id="liveFace">
+            <option value="U">U (Up)</option>
+            <option value="R">R (Right)</option>
+            <option value="F">F (Front)</option>
+            <option value="D">D (Down)</option>
+            <option value="L">L (Left)</option>
+            <option value="B">B (Back)</option>
+        </select><br>
+        <button type="button" id="startCameraBtn">📱 Start Back Camera</button>
+        <button type="button" id="captureBtn" disabled>📷 Capture & Upload</button>
+        <button type="button" id="stopCameraBtn">⏹️ Stop Camera</button>
+    </div>
+
+    <hr>
+    
+    <!-- Detected Faces Preview -->
+    <div class="faces-preview" id="facesPreview">
+        <h2>Detected Faces</h2>
+    </div>
+
+    <hr>
+    
+    <!-- Solve Section -->
+    <div class="solve-section">
+        <h2>Solve Cube</h2>
+        <button type="button" id="solveBtn">🧠 Solve Cube</button>
+        <p id="solutionOutput"></p>
+    </div>
+
+    <hr>
+    
+    <!-- Color Correction -->
+    <h2>🎨 Color Correction</h2>
+    <p>Select a face and click "Load Face" to see detected colors. Click any cell to correct colors.</p>
+
+    <div id="colorCorrectionPanel">
+        <select id="faceSelect">
+            <option value="U">U (Up)</option>
+            <option value="R">R (Right)</option>
+            <option value="F">F (Front)</option>
+            <option value="D">D (Down)</option>
+            <option value="L">L (Left)</option>
+            <option value="B">B (Back)</option>
+        </select>
+        <button type="button" id="loadFaceBtn">Load Face</button>
+
+        <!-- Color Grid -->
+        <div id="colorGrid" style="display:grid;grid-template-columns:repeat(3,60px);gap:5px;margin-top:10px;">
+            <!-- Populated by JavaScript -->
+        </div>
+
+        <br />
+        <button type="button" id="applyCorrectionBtn">Apply Fixes & Solve</button>
+    </div>
+
+    <p id="correctionStatus">Select a face and click "Load Face" to begin</p>
+
+    <!-- Cache-busting: Change v=2 to v=3, v=4 etc whenever you update main.js -->
+    <script src="js/main.js?v=4"></script>
+</body>
+
+</html>

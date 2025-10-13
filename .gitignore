@@ -1,0 +1,24 @@
+# Simplified .gitignore for cube_solver_workspace
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# ROS/colcon build artifacts
+build/
+install/
+log/
+
+# Python package metadata
+*.egg-info/
+
+# Processed cube images
+backend/uploads/*_detected.jpg
+
+# IDE settings (optional)
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
