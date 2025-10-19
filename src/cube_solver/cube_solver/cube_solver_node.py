@@ -21,9 +21,8 @@ Interfaces:
 Notes:
 - The node logs connection status, incoming solutions, per-move progress,
   acknowledgments, and error conditions.
-- If the serial device is unavailable at startup, the node continues to run,
-  but attempts to send moves will warning-log and return failure.
-
+- BASE_FORWARD automatically grips cube (0°)
+- BASE_BACK automatically releases cube (90°)
 """
 
 import rclpy
@@ -52,7 +51,6 @@ class CubeSolverNode(Node):
         Publisher emitting each move as it is sent to hardware.
     serial_port : serial.Serial | None
         Open serial connection to the ESP32, or ``None`` if unavailable.
-
     """
     def __init__(self):
         super().__init__('cube_solver_node')
@@ -74,18 +72,7 @@ class CubeSolverNode(Node):
 
     def solution_callback(self, msg):
         """
-        Process an incoming cube solution string.
-
-        The input is expected to be a space-separated list of moves. Each move
-        is sent to the ESP32 with a trailing newline. The method waits for an
-        acknowledgment (the literal line ``"DONE"``) for up to 10 seconds per
-        move. If any move fails to receive an ACK, the sequence is aborted.
-
-        Parameters
-        ----------
-        msg : std_msgs.msg.String
-            The message containing the full cube solution, e.g. "R U R' U'".
-
+        Process an incoming cube solution string with pre/post setup sequences.
         """
         solution = msg.data.strip()
         moves = solution.split()
@@ -93,14 +80,27 @@ class CubeSolverNode(Node):
         self.get_logger().info(f"Received solution: {solution}")
         self.get_logger().info(f"Parsed {len(moves)} moves.")
 
+        # === INITIAL SETUP SEQUENCE ===
+        self.get_logger().info("🔧 Preparing cube holder...")
+        self.send_move_with_ack("BASE_BACK")     # Release position (90°)
+        time.sleep(3)
+        self.send_move_with_ack("BASE_FORWARD")  # Grip position (0° - auto grips)
+        time.sleep(3)
+        self.get_logger().info("✅ Cube secured, starting solve sequence.")
+
+        # === MAIN SOLVE LOOP ===
         for move in moves:
-            # Send this move to the ESP32 and block until ACK or timeout.
             success = self.send_move_with_ack(move)
             if not success:
                 self.get_logger().warn(f"⚠️ No ACK for move '{move}', stopping sequence.")
                 break
 
-        self.get_logger().info("✅ All moves executed (or stopped on error).")
+        # === POST-SOLVE CLEANUP ===
+        self.get_logger().info("🎉 Solve sequence complete. Releasing cube...")
+        self.send_move_with_ack("BASE_BACK")     # Release position (90° - auto releases)
+        time.sleep(2)
+
+        self.get_logger().info("✅ All steps finished successfully.")
 
     def send_move_with_ack(self, move):
         """
@@ -121,7 +121,6 @@ class CubeSolverNode(Node):
             ``True`` if a ``DONE`` acknowledgment was received within the
             timeout; ``False`` if the serial port is unavailable, an error
             occurs, or the ACK times out.
-
         """
         if not self.serial_port:
             self.get_logger().warn("⚠️ ESP32 not connected.")
@@ -161,7 +160,6 @@ def main(args=None):
     This function initializes the rclpy context, creates and spins the
     ``CubeSolverNode`` until interrupted, then closes the serial port (if open),
     destroys the node, and shuts down rclpy.
-    
     """
     rclpy.init(args=args)
     node = CubeSolverNode()

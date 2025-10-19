@@ -105,6 +105,39 @@ function getElement(id) {
 // ========================================
 // BACKEND CONNECTION
 // ========================================
+// async function handleSetBackend() {
+//     console.log('🔧 Setting backend...');
+    
+//     let ip = getElement("backendIP").value.trim();
+//     if (!ip) {
+//         alert("Please enter backend IP!");
+//         return;
+//     }
+    
+//     if (!ip.startsWith("http")) {
+//         ip = "http://" + ip;
+//     }
+    
+//     updateStatus("backendStatus", "Testing connection...", "orange");
+    
+//     try {
+//         const res = await fetch(`${ip}/`, { method: "GET" });
+        
+//         if (res.ok) {
+//             backendURL = ip;
+//             localStorage.setItem("backendURL", ip);
+//             updateStatus("backendStatus", "✅ Connected: " + ip, "green");
+//             console.log('✅ Backend connected');
+//         } else {
+//             throw new Error(`HTTP ${res.status}`);
+//         }
+//     } catch (err) {
+//         updateStatus("backendStatus", "❌ Connection failed", "red");
+//         alert("Cannot connect: " + err.message);
+//         console.error('❌ Connection failed:', err);
+//     }
+// }
+
 async function handleSetBackend() {
     console.log('🔧 Setting backend...');
     
@@ -114,8 +147,14 @@ async function handleSetBackend() {
         return;
     }
     
+    // Force HTTPS for network access
     if (!ip.startsWith("http")) {
-        ip = "http://" + ip;
+        ip = "https://" + ip;  // ✅ Use HTTPS instead of HTTP
+    }
+    
+    // If user typed http://, change to https://
+    if (ip.startsWith("http://")) {
+        ip = ip.replace("http://", "https://");
     }
     
     updateStatus("backendStatus", "Testing connection...", "orange");

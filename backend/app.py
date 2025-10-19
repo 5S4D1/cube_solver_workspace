@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 import rclpy
@@ -7,17 +7,49 @@ from kociemba_utils import solve_cube
 from color_detector import get_cube_string, detect_face_colors
 
 UPLOAD_FOLDER = 'uploads'
+FRONTEND_FOLDER = '../frontend'  # Path to frontend folder
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# ========================================
+# STATIC FILE SERVING FOR FRONTEND
+# ========================================
 @app.route('/')
 def home():
-    return "Cube Solver Backend is Running"
+    """Serve the main HTML page from frontend folder"""
+    return send_from_directory(FRONTEND_FOLDER, 'index.html')
 
+@app.route('/upload.html')
+def upload_page():
+    """Serve upload.html if needed"""
+    return send_from_directory(FRONTEND_FOLDER, 'upload.html')
 
+@app.route('/js/<path:filename>')
+def serve_js(filename):
+    """Serve JavaScript files from frontend/js"""
+    return send_from_directory(os.path.join(FRONTEND_FOLDER, 'js'), filename)
+
+@app.route('/css/<path:filename>')
+def serve_css(filename):
+    """Serve CSS files from frontend/css"""
+    return send_from_directory(os.path.join(FRONTEND_FOLDER, 'css'), filename)
+
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    """Serve asset files from frontend/assets"""
+    return send_from_directory(os.path.join(FRONTEND_FOLDER, 'assets'), filename)
+
+@app.route('/uploads/<path:filename>')
+def serve_uploads(filename):
+    """Serve uploaded/detected images"""
+    return send_from_directory(UPLOAD_FOLDER, filename)
+
+# ========================================
+# EXISTING ROUTES
+# ========================================
 @app.route('/solve_cube', methods=['POST'])
 def solve_cube_route():
     """
@@ -44,7 +76,7 @@ def solve_cube_route():
 
 
 @app.route('/publish_solution', methods=['POST'])
-def publish_solution():
+def publish_solution_route():
     """
     Accept a cube string from Thunder Client and publish its solution to ROS2.
     Example body (JSON):
@@ -216,7 +248,7 @@ def manual_solve():
         cube_string = ''.join(cube_chars)
         # validate length 54
         if len(cube_string) != 54:
-            return jsonify({'error': 'Built cubestr has wrong length'}, 400)
+            return jsonify({'error': 'Built cubestr has wrong length'}), 400
 
         # solve
         solution = solve_cube(cube_string)
@@ -229,4 +261,5 @@ def manual_solve():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Use adhoc SSL for HTTPS (allows camera access on local network)
+    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context='adhoc')
