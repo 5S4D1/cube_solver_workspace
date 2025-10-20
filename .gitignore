@@ -14,7 +14,6 @@ log/
 
 # Processed cube images
 backend/uploads/*.jpg
-backend/uploads/*_detected.jpg
 
 # IDE settings (optional)
 .vscode/
