@@ -13,7 +13,9 @@ log/
 *.egg-info/
 
 # Processed cube images
+# Keep the uploads directory but ignore jpg files
 backend/uploads/*.jpg
+!backend/uploads/.gitkeep
 
 # IDE settings (optional)
 .vscode/
