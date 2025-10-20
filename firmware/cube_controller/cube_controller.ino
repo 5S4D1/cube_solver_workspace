@@ -131,6 +131,7 @@ void executeMove(String move) {
 void rotateFrontCW() {
   Serial.println("➡️ Front 90° CW");
   faceFront.write(servoCW);
+  baseFront.write(servoRelease);
   delay(800);
 }
 
@@ -142,11 +143,37 @@ void rotateFrontCCW() {
 
 void rotateFront180() {
   Serial.println("🔄 Front 180°");
+  
+  // First 90° rotation
   faceFront.write(servoCW);
   delay(800);
+  
+  // Release grip (only front base)
+  baseFront.write(servoRelease);
+  delay(800);
+  
+  // Reset face servo to neutral
   faceFront.write(servoNeutral);
-  delay(200);
+  delay(400);
+  
+  // Grip again (only front base)
+  baseFront.write(servoGrip);
+  delay(800);
+  
+  // Second 90° rotation
   faceFront.write(servoCW);
+  delay(800);
+  
+  // Final release (only front base)
+  baseFront.write(servoRelease);
+  delay(800);
+  
+  // Final reset to neutral
+  faceFront.write(servoNeutral);
+  delay(400);
+  
+  // Final grip (only front base)
+  baseFront.write(servoGrip);
   delay(800);
 }
 
@@ -165,11 +192,37 @@ void rotateRightCCW() {
 
 void rotateRight180() {
   Serial.println("🔄 Right 180°");
+  
+  // First 90° rotation
   faceRight.write(servoCW);
   delay(800);
+  
+  // Release grip (only right base)
+  baseRight.write(servoRelease);
+  delay(800);
+  
+  // Reset face servo to neutral
   faceRight.write(servoNeutral);
-  delay(200);
+  delay(400);
+  
+  // Grip again (only right base)
+  baseRight.write(servoGrip);
+  delay(800);
+  
+  // Second 90° rotation
   faceRight.write(servoCW);
+  delay(800);
+  
+  // Final release (only right base)
+  baseRight.write(servoRelease);
+  delay(800);
+  
+  // Final reset to neutral
+  faceRight.write(servoNeutral);
+  delay(400);
+  
+  // Final grip (only right base)
+  baseRight.write(servoGrip);
   delay(800);
 }
 
@@ -188,11 +241,37 @@ void rotateLeftCCW() {
 
 void rotateLeft180() {
   Serial.println("🔄 Left 180°");
+  
+  // First 90° rotation
   faceLeft.write(servoCW);
   delay(800);
+  
+  // Release grip (only left base)
+  baseLeft.write(servoRelease);
+  delay(800);
+  
+  // Reset face servo to neutral
   faceLeft.write(servoNeutral);
-  delay(200);
+  delay(400);
+  
+  // Grip again (only left base)
+  baseLeft.write(servoGrip);
+  delay(800);
+  
+  // Second 90° rotation
   faceLeft.write(servoCW);
+  delay(800);
+  
+  // Final release (only left base)
+  baseLeft.write(servoRelease);
+  delay(800);
+  
+  // Final reset to neutral
+  faceLeft.write(servoNeutral);
+  delay(400);
+  
+  // Final grip (only left base)
+  baseLeft.write(servoGrip);
   delay(800);
 }
 
@@ -211,11 +290,37 @@ void rotateBackCCW() {
 
 void rotateBack180() {
   Serial.println("🔄 Back 180°");
+  
+  // First 90° rotation
   faceBack.write(servoCW);
   delay(800);
+  
+  // Release grip (only back base)
+  baseBack.write(servoRelease);
+  delay(800);
+  
+  // Reset face servo to neutral
   faceBack.write(servoNeutral);
-  delay(200);
+  delay(400);
+  
+  // Grip again (only back base)
+  baseBack.write(servoGrip);
+  delay(800);
+  
+  // Second 90° rotation
   faceBack.write(servoCW);
+  delay(800);
+  
+  // Final release (only back base)
+  baseBack.write(servoRelease);
+  delay(800);
+  
+  // Final reset to neutral
+  faceBack.write(servoNeutral);
+  delay(400);
+  
+  // Final grip (only back base)
+  baseBack.write(servoGrip);
   delay(800);
 }
 
@@ -223,35 +328,88 @@ void rotateBack180() {
 void rotateUpCW() {
   Serial.println("⬆️ Up 90° CW");
   
-  // Step 1: Release (move back to 90°)
-  moveBaseBack();
+  // Rotate Front face
+  baseFront.write(servoRelease);
+  delay(800);
+  faceFront.write(servoCW);
+  delay(800);
+  baseFront.write(servoGrip);
+  delay(800);
+  faceFront.write(servoNeutral);
   delay(300);
   
-  // Step 2: Rotate all bases clockwise
-  baseFront.write(servoCW);
-  baseBack.write(servoCW);
-  baseLeft.write(servoCW);
-  baseRight.write(servoCW);
+  // Rotate Right face
+  baseRight.write(servoRelease);
   delay(800);
+  faceRight.write(servoCW);
+  delay(800);
+  baseRight.write(servoGrip);
+  delay(800);
+  faceRight.write(servoNeutral);
+  delay(300);
   
-  // Step 3: Grip (move forward to 0°)
-  moveBaseForward();
+  // Rotate Back face
+  baseBack.write(servoRelease);
+  delay(800);
+  faceBack.write(servoCW);
+  delay(800);
+  baseBack.write(servoGrip);
+  delay(800);
+  faceBack.write(servoNeutral);
+  delay(300);
+  
+  // Rotate Left face
+  baseLeft.write(servoRelease);
+  delay(800);
+  faceLeft.write(servoCW);
+  delay(800);
+  baseLeft.write(servoGrip);
+  delay(800);
+  faceLeft.write(servoNeutral);
   delay(300);
 }
 
 void rotateUpCCW() {
   Serial.println("⬇️ Up 90° CCW");
   
-  moveBaseBack();
+  // Rotate Front face
+  baseFront.write(servoRelease);
+  delay(800);
+  faceFront.write(servoCCW);
+  delay(800);
+  baseFront.write(servoGrip);
+  delay(800);
+  faceFront.write(servoNeutral);
   delay(300);
   
-  baseFront.write(servoCCW);
-  baseBack.write(servoCCW);
-  baseLeft.write(servoCCW);
-  baseRight.write(servoCCW);
+  // Rotate Right face
+  baseRight.write(servoRelease);
   delay(800);
+  faceRight.write(servoCCW);
+  delay(800);
+  baseRight.write(servoGrip);
+  delay(800);
+  faceRight.write(servoNeutral);
+  delay(300);
   
-  moveBaseForward();
+  // Rotate Back face
+  baseBack.write(servoRelease);
+  delay(800);
+  faceBack.write(servoCCW);
+  delay(800);
+  baseBack.write(servoGrip);
+  delay(800);
+  faceBack.write(servoNeutral);
+  delay(300);
+  
+  // Rotate Left face
+  baseLeft.write(servoRelease);
+  delay(800);
+  faceLeft.write(servoCCW);
+  delay(800);
+  baseLeft.write(servoGrip);
+  delay(800);
+  faceLeft.write(servoNeutral);
   delay(300);
 }
 
@@ -266,32 +424,88 @@ void rotateUp180() {
 void rotateDownCW() {
   Serial.println("⬇️ Down 90° CW");
   
-  moveBaseBack();
+  // Rotate Front face
+  baseFront.write(servoRelease);
+  delay(800);
+  faceFront.write(servoCCW);
+  delay(800);
+  baseFront.write(servoGrip);
+  delay(800);
+  faceFront.write(servoNeutral);
   delay(300);
   
-  baseFront.write(servoCCW);
-  baseBack.write(servoCCW);
-  baseLeft.write(servoCCW);
-  baseRight.write(servoCCW);
+  // Rotate Right face
+  baseRight.write(servoRelease);
   delay(800);
+  faceRight.write(servoCCW);
+  delay(800);
+  baseRight.write(servoGrip);
+  delay(800);
+  faceRight.write(servoNeutral);
+  delay(300);
   
-  moveBaseForward();
+  // Rotate Back face
+  baseBack.write(servoRelease);
+  delay(800);
+  faceBack.write(servoCCW);
+  delay(800);
+  baseBack.write(servoGrip);
+  delay(800);
+  faceBack.write(servoNeutral);
+  delay(300);
+  
+  // Rotate Left face
+  baseLeft.write(servoRelease);
+  delay(800);
+  faceLeft.write(servoCCW);
+  delay(800);
+  baseLeft.write(servoGrip);
+  delay(800);
+  faceLeft.write(servoNeutral);
   delay(300);
 }
 
 void rotateDownCCW() {
   Serial.println("⬆️ Down 90° CCW");
   
-  moveBaseBack();
+  // Rotate Front face
+  baseFront.write(servoRelease);
+  delay(800);
+  faceFront.write(servoCW);
+  delay(800);
+  baseFront.write(servoGrip);
+  delay(800);
+  faceFront.write(servoNeutral);
   delay(300);
   
-  baseFront.write(servoCW);
-  baseBack.write(servoCW);
-  baseLeft.write(servoCW);
-  baseRight.write(servoCW);
+  // Rotate Right face
+  baseRight.write(servoRelease);
   delay(800);
+  faceRight.write(servoCW);
+  delay(800);
+  baseRight.write(servoGrip);
+  delay(800);
+  faceRight.write(servoNeutral);
+  delay(300);
   
-  moveBaseForward();
+  // Rotate Back face
+  baseBack.write(servoRelease);
+  delay(800);
+  faceBack.write(servoCW);
+  delay(800);
+  baseBack.write(servoGrip);
+  delay(800);
+  faceBack.write(servoNeutral);
+  delay(300);
+  
+  // Rotate Left face
+  baseLeft.write(servoRelease);
+  delay(800);
+  faceLeft.write(servoCW);
+  delay(800);
+  baseLeft.write(servoGrip);
+  delay(800);
+  faceLeft.write(servoNeutral);
   delay(300);
 }
 
