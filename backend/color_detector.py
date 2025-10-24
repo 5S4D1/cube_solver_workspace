@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Map colors to Kociemba notation
 COLOR_MAP = {
@@ -63,11 +66,11 @@ def detect_face_colors(image_path, save_path=None):
             # Debug output for problematic colors (white, yellow, unknown)
             if color_letter in ['U', 'D', 'X']:
                 color_name = {'U': 'white', 'D': 'yellow', 'X': 'unknown/black'}[color_letter]
-                print(f"Sticker at row {row}, col {col}: HSV={hsv_pixel} -> {color_letter} ({color_name})")
+                logger.debug("Sticker at row %d, col %d: HSV=%s -> %s (%s)", row, col, hsv_pixel, color_letter, color_name)
             
             # Debug output for red/orange classification
             elif color_letter in ['L', 'R']:
-                print(f"Sticker at row {row}, col {col}: HSV={hsv_pixel} -> {color_letter} ({'red' if color_letter == 'L' else 'orange'})")
+                logger.debug("Sticker at row %d, col %d: HSV=%s -> %s (%s)", row, col, hsv_pixel, color_letter, ('red' if color_letter == 'L' else 'orange'))
 
             # Draw rectangle for visualization
             top_left = (col * 100 + 10, row * 100 + 10)
@@ -177,4 +180,4 @@ def get_cube_string(upload_folder='uploads'):
 
 if __name__ == "__main__":
     cube_str = get_cube_string()
-    print("Cube String:", cube_str)
+    logger.info("Cube String: %s", cube_str)

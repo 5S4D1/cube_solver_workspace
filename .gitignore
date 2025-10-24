@@ -14,8 +14,7 @@ log/
 
 # Processed cube images
 # Keep the uploads directory but ignore jpg files
-backend/uploads/*.jpg
-!backend/uploads/.gitkeep
+backend/uploads/*_detected.jpg
 
 # IDE settings (optional)
 .vscode/
