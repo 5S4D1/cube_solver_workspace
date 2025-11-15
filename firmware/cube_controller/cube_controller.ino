@@ -1,6 +1,25 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
-
+/*
+    "F": "Rotate the Front face 90° clockwise",
+    "F'": "Rotate the Front face 90° counter-clockwise",
+    "F2": "Rotate the Front face 180° (half turn)",
+    "B": "Rotate the Back face 90° clockwise",
+    "B'": "Rotate the Back face 90° counter-clockwise",
+    "B2": "Rotate the Back face 180°",
+    "U": "Rotate the Up (top) face 90° clockwise",
+    "U'": "Rotate the Up face 90° counter-clockwise",
+    "U2": "Rotate the Up face 180°",
+    "D": "Rotate the Down (bottom) face 90° clockwise",
+    "D'": "Rotate the Down face 90° counter-clockwise",
+    "D2": "Rotate the Down face 180°",
+    "R": "Rotate the Right face 90° clockwise",
+    "R'": "Rotate the Right face 90° counter-clockwise",
+    "R2": "Rotate the Right face 180°",
+    "L": "Rotate the Left face 90° clockwise",
+    "L'": "Rotate the Left face 90° counter-clockwise",
+    "L2": "Rotate the Left face 180°",
+*/
 // ---- Servo Objects ----
 Servo baseFront, baseBack, baseLeft, baseRight;
 Servo faceFront, faceBack, faceLeft, faceRight;
@@ -77,6 +96,7 @@ void loop() {
 }
 
 // ---- Base Movement Functions ----
+// === release the cube ===
 void moveBaseBack() {
   Serial.println("⬅️ Moving base backward (RELEASE)...");
   baseFront.write(servoRelease);
@@ -85,7 +105,7 @@ void moveBaseBack() {
   baseRight.write(servoRelease);
   delay(800);
 }
-
+// === grip the cube ===
 void moveBaseForward() {
   Serial.println("➡️ Moving base forward (GRIP)...");
   baseFront.write(servoGrip);
@@ -95,7 +115,7 @@ void moveBaseForward() {
   delay(800);
 }
 
-// ---- Reset Face Servos to Neutral ----
+// ---- Reset Face Servos to Neutral on 90 degree ----
 void resetFaceServos() {
   faceFront.write(servoNeutral);
   faceBack.write(servoNeutral);
@@ -104,7 +124,7 @@ void resetFaceServos() {
   delay(400);
 }
 
-// ---- Motion Logic ----
+// ==== Motion Logic ====
 void executeMove(String move) {
   if (move == "F") rotateFrontCW();
   else if (move == "F'") rotateFrontCCW();
@@ -127,203 +147,155 @@ void executeMove(String move) {
   else Serial.println("⚠️ Unknown move: " + move);
 }
 
-// ---- Front Face Rotations ----
+// === Front Face 90° clockwise Rotations ===
 void rotateFrontCW() {
   Serial.println("➡️ Front 90° CW");
   faceFront.write(servoCW);
+  delay(800);
   baseFront.write(servoRelease);
   delay(800);
+  faceFront.write(servoNeutral);
+  delay(600);
+  baseFront.write(servoGrip);
+  delay(600);
 }
 
+// === Front Face 90° counter clockwise Rotations ===
 void rotateFrontCCW() {
   Serial.println("⬅️ Front 90° CCW");
   faceFront.write(servoCCW);
   delay(800);
+  baseFront.write(servoRelease);
+  delay(800);
+  faceFront.write(servoNeutral);
+  delay(600);
+  baseFront.write(servoGrip);
+  delay(600);
 }
 
+// === Front Face 180° clockwise Rotations ===
 void rotateFront180() {
-  Serial.println("🔄 Front 180°");
+  Serial.println("🔄 Front 90°+90° clockwise");
   
   // First 90° rotation
-  faceFront.write(servoCW);
-  delay(800);
-  
-  // Release grip (only front base)
-  baseFront.write(servoRelease);
-  delay(800);
-  
-  // Reset face servo to neutral
-  faceFront.write(servoNeutral);
-  delay(400);
-  
-  // Grip again (only front base)
-  baseFront.write(servoGrip);
-  delay(800);
-  
+  rotateFrontCW();
+
   // Second 90° rotation
-  faceFront.write(servoCW);
-  delay(800);
-  
-  // Final release (only front base)
-  baseFront.write(servoRelease);
-  delay(800);
-  
-  // Final reset to neutral
-  faceFront.write(servoNeutral);
-  delay(400);
-  
-  // Final grip (only front base)
-  baseFront.write(servoGrip);
-  delay(800);
+  rotateFrontCW();
 }
 
-// ---- Right Face Rotations ----
+// === Right Face 90° clockwise Rotations ===
 void rotateRightCW() {
   Serial.println("➡️ Right 90° CW");
   faceRight.write(servoCW);
   delay(800);
+  baseRight.write(servoRelease);
+  delay(600);
+  faceRight.write(servoNeutral);
+  delay(600);
+  baseRight.write(servoGrip);
+  delay(600);
 }
 
+// === Right Face 90° counter clockwise Rotations ===
 void rotateRightCCW() {
   Serial.println("⬅️ Right 90° CCW");
   faceRight.write(servoCCW);
   delay(800);
+  baseRight.write(servoRelease);
+  delay(600);
+  faceRight.write(servoNeutral);
+  delay(600);
+  baseRight.write(servoGrip);
+  delay(600);
 }
-
+// === Right Face 180° clockwise Rotations ===
 void rotateRight180() {
   Serial.println("🔄 Right 180°");
   
   // First 90° rotation
-  faceRight.write(servoCW);
-  delay(800);
-  
-  // Release grip (only right base)
-  baseRight.write(servoRelease);
-  delay(800);
-  
-  // Reset face servo to neutral
-  faceRight.write(servoNeutral);
-  delay(400);
-  
-  // Grip again (only right base)
-  baseRight.write(servoGrip);
-  delay(800);
+  rotateRightCW();
   
   // Second 90° rotation
-  faceRight.write(servoCW);
-  delay(800);
-  
-  // Final release (only right base)
-  baseRight.write(servoRelease);
-  delay(800);
-  
-  // Final reset to neutral
-  faceRight.write(servoNeutral);
-  delay(400);
-  
-  // Final grip (only right base)
-  baseRight.write(servoGrip);
-  delay(800);
+  rotateRightCW();
 }
 
-// ---- Left Face Rotations ----
+// === Left Face 90° clockwise Rotations ===
 void rotateLeftCW() {
   Serial.println("➡️ Left 90° CW");
   faceLeft.write(servoCW);
   delay(800);
+  baseLeft.write(servoRelease);
+  delay(600);
+  faceLeft.write(servoNeutral);
+  delay(600);
+  baseLeft.write(servoGrip);
+  delay(800);
 }
 
+// === Left Face 90° counter clockwise Rotations ===
 void rotateLeftCCW() {
   Serial.println("⬅️ Left 90° CCW");
   faceLeft.write(servoCCW);
   delay(800);
+  baseLeft.write(servoRelease);
+  delay(600);
+  faceLeft.write(servoNeutral);
+  delay(600);
+  baseLeft.write(servoGrip);
+  delay(800);
 }
 
+// === Left Face 180° clockwise Rotations ===
 void rotateLeft180() {
   Serial.println("🔄 Left 180°");
   
   // First 90° rotation
-  faceLeft.write(servoCW);
-  delay(800);
-  
-  // Release grip (only left base)
-  baseLeft.write(servoRelease);
-  delay(800);
-  
-  // Reset face servo to neutral
-  faceLeft.write(servoNeutral);
-  delay(400);
-  
-  // Grip again (only left base)
-  baseLeft.write(servoGrip);
-  delay(800);
+  rotateLeftCW();
   
   // Second 90° rotation
-  faceLeft.write(servoCW);
-  delay(800);
-  
-  // Final release (only left base)
-  baseLeft.write(servoRelease);
-  delay(800);
-  
-  // Final reset to neutral
-  faceLeft.write(servoNeutral);
-  delay(400);
-  
-  // Final grip (only left base)
-  baseLeft.write(servoGrip);
-  delay(800);
+  rotateLeftCW();
 }
 
-// ---- Back Face Rotations ----
+// === Back Face 90° clockwise Rotations ===
 void rotateBackCW() {
   Serial.println("➡️ Back 90° CW");
   faceBack.write(servoCW);
   delay(800);
+  baseBack.write(servoRelease);
+  delay(600);
+  faceBack.write(servoNeutral);
+  delay(400);
+  baseBack.write(servoGrip);
+  delay(600);
 }
 
+// === Back Face 90° counter clockwise Rotations ===
 void rotateBackCCW() {
   Serial.println("⬅️ Back 90° CCW");
   faceBack.write(servoCCW);
   delay(800);
+  baseBack.write(servoRelease);
+  delay(600);
+  faceBack.write(servoNeutral);
+  delay(400);
+  baseBack.write(servoGrip);
+  delay(600);
 }
 
+// === Back Face 180° clockwise Rotations ===
 void rotateBack180() {
   Serial.println("🔄 Back 180°");
   
   // First 90° rotation
-  faceBack.write(servoCW);
-  delay(800);
-  
-  // Release grip (only back base)
-  baseBack.write(servoRelease);
-  delay(800);
-  
-  // Reset face servo to neutral
-  faceBack.write(servoNeutral);
-  delay(400);
-  
-  // Grip again (only back base)
-  baseBack.write(servoGrip);
-  delay(800);
+  rotateBackCW();
   
   // Second 90° rotation
-  faceBack.write(servoCW);
-  delay(800);
-  
-  // Final release (only back base)
-  baseBack.write(servoRelease);
-  delay(800);
-  
-  // Final reset to neutral
-  faceBack.write(servoNeutral);
-  delay(400);
-  
-  // Final grip (only back base)
-  baseBack.write(servoGrip);
-  delay(800);
+  rotateBackCCW();
 }
-
+// =====================================================
+//          below part not fixed yet. do soon...
+// =====================================================
 // ---- Up Face Rotations (Requires Cube Rotation) ----
 void rotateUpCW() {
   Serial.println("⬆️ Up 90° CW");
